@@ -1,5 +1,6 @@
 import { createDirectus, rest } from '@directus/sdk';
 import { get_actions_and_materials_for_role_id } from './routes/get_materials_and_actions';
+import { get_collectors } from './routes/get_collectors';
 
 const client = createDirectus('https://enaleia.directus.app').with(rest());
 
@@ -28,7 +29,17 @@ Bun.serve({
         return new Response("Error fetching data", { status: 500 });
       }
     }
-    
+
+    if (url.pathname === "/collectors") {
+      try {
+        const result = await get_collectors(client);
+        return new Response(JSON.stringify(result), { status: 200 });
+      } catch (error) {
+        return new Response("Error fetching data", { status: 500 });
+      }
+    }
+
+
     return new Response("404!", { status: 404 });
   },
 });
