@@ -1,10 +1,12 @@
 import { readItems } from '@directus/sdk';
 
-export const get_collectors = async (client: any) => {
+export const get_collectors = async (client: any, collector_id: string | null) => {
+  const filter = collector_id ? { collector_id: { _eq: collector_id } } : {};
   try {
     const collectors = await client.request(
       readItems('Collectors' as never, {
-        fields: ['collector_name', 'collector_country', 'company_name', 'vessel_type'],
+        fields: ['collector_name', 'collector_country', 'company_name', 'vessel_type', 'collector_id'],
+        filter,
       })
     );
     

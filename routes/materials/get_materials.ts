@@ -3,7 +3,7 @@ import { readItems } from '@directus/sdk';
 export const get_materials = async (client: any, id: string | null) => {
   try {
     // Define the filter condition based on the presence of id
-    const filter = id ? { user_role: { _eq: id } } : undefined;
+    const filter = id ? { user_role: { _eq: id } } : {};
 
     const materials = await client.request(
       readItems('Materials' as never, {

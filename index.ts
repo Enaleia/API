@@ -39,9 +39,11 @@ Bun.serve({
       }
     }
 
-    if (url.pathname === "/collectors") {
+    if (url.pathname === "/get_collectors") {
       try {
-        const result = await get_collectors(client);
+        const roleId = url.searchParams.get("collectorId"); // Get roleId from query parameters
+      
+        const result = await get_collectors(client, roleId);
         return new Response(JSON.stringify(result), { status: 200 });
       } catch (error) {
         return new Response("Error fetching data", { status: 500 });
