@@ -1,6 +1,7 @@
 import { createDirectus, rest } from '@directus/sdk';
-import { get_actions_and_materials_for_role_id } from './routes/get_materials_and_actions';
-import { get_collectors } from './routes/get_collectors';
+import { get_actions } from './routes/actions/get_actions';
+import { get_collectors } from './routes/collectors/get_collectors';
+import { get_materials } from './routes/materials/get_materials';
 
 const client = createDirectus('https://enaleia.directus.app').with(rest());
 
@@ -16,14 +17,22 @@ Bun.serve({
       return new Response("All Boats data!");
     }
     
-    if (url.pathname === "/actions-and-materials") {
+    if (url.pathname === "/actions") {
       const roleId = url.searchParams.get("roleId"); // Get roleId from query parameters
-      if (!roleId) {
-        return new Response("Role ID is required", { status: 400 });
-      }
       
       try {
-        const result = await get_actions_and_materials_for_role_id(client, roleId);
+        const result = await get_actions(client, roleId);
+        return new Response(JSON.stringify(result), { status: 200 });
+      } catch (error) {
+        return new Response("Error fetching data", { status: 500 });
+      }
+    }
+
+    if (url.pathname === "/materials") {
+      const roleId = url.searchParams.get("roleId"); // Get roleId from query parameters
+      
+      try {
+        const result = await get_materials(client, roleId);
         return new Response(JSON.stringify(result), { status: 200 });
       } catch (error) {
         return new Response("Error fetching data", { status: 500 });
