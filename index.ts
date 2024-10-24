@@ -3,6 +3,7 @@ import { get_actions } from './routes/actions/get_actions';
 import { get_collectors } from './routes/collectors/get_collectors';
 import { get_materials } from './routes/materials/get_materials';
 import { create_event } from './routes/events/create_event';
+import { get_events } from './routes/events/get_events';
 
 const client = createDirectus('https://enaleia.directus.app').with(rest());
 
@@ -10,15 +11,15 @@ Bun.serve({
   fetch: async (req) => {
     const url = new URL(req.url);
     
-    if (url.pathname === "/") {
-      return new Response("All directus data");
+    if (url.pathname === "/v1") {
+      return new Response("All directus data - V1");
     }
     
-    if (url.pathname === "/boats") {
+    if (url.pathname === "/v1/boats") {
       return new Response("All Boats data!");
     }
     
-    if (url.pathname === "/create_event") {
+    if (url.pathname === "/v1/create_event") {
       const body = await req.json(); // Ensure to parse the request body
       if (!body) {
         return new Response("Invalid request body", { status: 400 });
@@ -29,13 +30,13 @@ Bun.serve({
 
       try {
         const result = await create_event(client, params)
-        return new Response(JSON.stringify(result), { status: 200 });
+        return new Response(JSON.stringify(result), { status: 201 });
       } catch (error) {
-        return new Response("Error fetching data", { status: 500 });
+        return new Response("Error creating item", { status: 500 });
       }
     }
 
-    if (url.pathname === "/actions") {
+    if (url.pathname === "/v1/actions") {
       const roleId = url.searchParams.get("roleId"); // Get roleId from query parameters
       
       try {
@@ -46,7 +47,18 @@ Bun.serve({
       }
     }
 
-    if (url.pathname === "/materials") {
+    if (url.pathname === "/v1/events") {
+      const eventId = url.searchParams.get("eventId"); // Get roleId from query parameters
+      
+      try {
+        const result = await get_events(client, eventId);
+        return new Response(JSON.stringify(result), { status: 200 });
+      } catch (error) {
+        return new Response("Error fetching data", { status: 500 });
+      }
+    }
+
+    if (url.pathname === "/v1/materials") {
       const roleId = url.searchParams.get("roleId"); // Get roleId from query parameters
       
       try {
@@ -57,7 +69,7 @@ Bun.serve({
       }
     }
 
-    if (url.pathname === "/get_collectors") {
+    if (url.pathname === "/v1/collectors") {
       try {
         const roleId = url.searchParams.get("collectorId"); // Get roleId from query parameters
       
