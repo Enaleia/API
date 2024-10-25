@@ -2,7 +2,13 @@ import { readItems } from '@directus/sdk';
 
 export const get_actions = async (client: any, id: string | null) => {
   // Define the filter condition based on the presence of id
-  const filter = id ? { user_role: { _eq: id } } : {};
+
+  let filter = {};
+  if (id) {
+    filter = Object.assign({"user_role": { _eq: id }})
+  }
+
+  console.log(filter);
 
   try {
     const actions = await client.request(

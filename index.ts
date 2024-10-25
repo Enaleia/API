@@ -4,6 +4,7 @@ import { get_collectors } from './routes/collectors/get_collectors';
 import { get_materials } from './routes/materials/get_materials';
 import { create_event } from './routes/events/create_event';
 import { get_events } from './routes/events/get_events';
+import { get_actions_and_materials_for_role } from './business_logic/get_actions_and_materials_for_role';
 
 const client = createDirectus('https://enaleia.directus.app').with(rest());
 
@@ -63,6 +64,19 @@ Bun.serve({
       
       try {
         const result = await get_materials(client, roleId);
+        return new Response(JSON.stringify(result), { status: 200 });
+      } catch (error) {
+        return new Response("Error fetching data", { status: 500 });
+      }
+    }
+
+    if (url.pathname === "/v1/get_actions_and_materials_for_role") {
+      const roleId = url.searchParams.get("roleId"); // Get roleId from query parameters
+      if (!roleId) {
+        return new Response("Missing roleId parameter", { status: 400 });
+      }
+      try {
+        const result = await get_actions_and_materials_for_role(client, roleId);
         return new Response(JSON.stringify(result), { status: 200 });
       } catch (error) {
         return new Response("Error fetching data", { status: 500 });
