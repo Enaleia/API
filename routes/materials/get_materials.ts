@@ -1,26 +1,23 @@
 import { readItems } from '@directus/sdk';
 
-export const get_materials = async (client: any, id: string | null) => {
+export const get_materials = async (client: any, roles: string[]) => {
   try {
-    // Define the filter condition based on the presence of id
-    let filter = {};
-    if (id) {
-      filter = Object.assign({"user_role.id": { _eq: id }})
-    }
-  
-    console.log(filter);
-
     const materials = await client.request(
       readItems('Materials' as never, {
-        fields: ['material_id', 'material_name', 'material_description', 'user_role'],
-        filter, // Apply the filter if id is provided
+        fields: ['material_id', 'material_name', 'material_description', 'user_role', 'roles'],
       })
     );
 
-    const result = {
-      materials,
-    };
+    const filterMaterials = roles.length > 0 
+    ? materials.filter((material: any) => {
+      const materialRoles = material.roles ? Object.values(material.roles) as string[] : []; // Convert JSON to array and assert type
+      return materialRoles.some((role: string) => roles.includes(role)); // Check if any role matches
+      })
+    : materials;
 
+    const result = {
+      filterMaterials,
+    };
     return result;
   } catch (e) {
     console.log(e);

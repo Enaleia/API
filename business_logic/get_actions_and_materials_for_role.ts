@@ -1,10 +1,9 @@
-import { readItems } from '@directus/sdk';
 import { get_actions, get_materials } from '../routes/';
 
-export const get_actions_and_materials_for_role = async (client: any, roleId: string) => {
+export const get_actions_and_materials_for_role = async (client: any, roles: string[]) => {
   try {
-    const actions = await get_actions(client, roleId)
-    const materials = await get_materials(client, roleId)
+    const actions = await get_actions(client, roles)
+    const materials = await get_materials(client, roles)
 
     const result = {
       actions,

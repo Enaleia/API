@@ -1,25 +1,22 @@
 import { readItems } from '@directus/sdk';
 
-export const get_actions = async (client: any, id: string | null) => {
-  // Define the filter condition based on the presence of id
-
-  let filter = {};
-  if (id) {
-    filter = Object.assign({"user_role": { _eq: id }})
-  }
-
-  console.log(filter);
-
+export const get_actions = async (client: any, roles: string[]) => {
   try {
     const actions = await client.request(
       readItems('Actions' as never, {
-        fields: ['action_id', 'action_name', 'action_description', 'user_role'],
-        filter, // Apply the filter if id is provided
+        fields: ['action_id', 'action_name', 'action_description', 'user_role', 'roles'],
       })
     );
 
+    const filteredActions = roles.length > 0 
+    ? actions.filter((action: any) => {
+      const actionRoles = action.roles ? Object.values(action.roles) as string[] : []; // Convert JSON to array and assert type
+      return actionRoles.some((role: string) => roles.includes(role)); // Check if any role matches
+      })
+    : actions;
+
     const result = {
-      actions,
+      filteredActions,
     };
     
     console.log(result,'here');

@@ -38,10 +38,11 @@ Bun.serve({
     }
 
     if (url.pathname === "/v1/actions") {
-      const roleId = url.searchParams.get("roleId"); // Get roleId from query parameters
+      const rolesParam = url.searchParams.get("roles"); // Get roles from query parameters
+      const roles = rolesParam ? rolesParam.split(',') : []; // Split into an array
       
       try {
-        const result = await get_actions(client, roleId);
+        const result = await get_actions(client, roles);
         return new Response(JSON.stringify(result), { status: 200 });
       } catch (error) {
         return new Response("Error fetching data", { status: 500 });
@@ -60,10 +61,11 @@ Bun.serve({
     }
 
     if (url.pathname === "/v1/materials") {
-      const roleId = url.searchParams.get("roleId"); // Get roleId from query parameters
+      const rolesParam = url.searchParams.get("roles"); // Get roles from query parameters
+      const roles = rolesParam ? rolesParam.split(',') : []; // Split into an array
       
       try {
-        const result = await get_materials(client, roleId);
+        const result = await get_materials(client, roles);
         return new Response(JSON.stringify(result), { status: 200 });
       } catch (error) {
         return new Response("Error fetching data", { status: 500 });
@@ -71,12 +73,14 @@ Bun.serve({
     }
 
     if (url.pathname === "/v1/get_actions_and_materials_for_role") {
-      const roleId = url.searchParams.get("roleId"); // Get roleId from query parameters
-      if (!roleId) {
+      const rolesParam = url.searchParams.get("roles"); // Get roles from query parameters
+      const roles = rolesParam ? rolesParam.split(',') : []; // Split into an array
+      
+      if (!roles) {
         return new Response("Missing roleId parameter", { status: 400 });
       }
       try {
-        const result = await get_actions_and_materials_for_role(client, roleId);
+        const result = await get_actions_and_materials_for_role(client, roles);
         return new Response(JSON.stringify(result), { status: 200 });
       } catch (error) {
         return new Response("Error fetching data", { status: 500 });
