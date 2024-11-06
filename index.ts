@@ -5,6 +5,7 @@ import { get_materials } from './routes/materials/get_materials';
 import { create_event } from './routes/events/create_event';
 import { get_events } from './routes/events/get_events';
 import { get_actions_and_materials_for_role } from './business_logic/get_actions_and_materials_for_role';
+import { get_aggregate_data } from './business_logic/get_aggregates';
 
 const client = createDirectus('https://enaleia.directus.app').with(rest());
 
@@ -81,6 +82,16 @@ Bun.serve({
       }
       try {
         const result = await get_actions_and_materials_for_role(client, roles);
+        return new Response(JSON.stringify(result), { status: 200 });
+      } catch (error) {
+        return new Response("Error fetching data", { status: 500 });
+      }
+    }
+
+    if (url.pathname === "/v1/aggregates") {
+
+      try {
+        const result = await get_aggregate_data(client);
         return new Response(JSON.stringify(result), { status: 200 });
       } catch (error) {
         return new Response("Error fetching data", { status: 500 });
